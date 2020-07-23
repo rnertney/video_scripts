@@ -100,50 +100,50 @@ PATH="$HOME/bin:$PATH" make -j && \
 make install
 
 rm -rf ~/ffmpeg_sources/SVT*
-cd ~/ffmpeg_sources/ && \ 
-git clone https://github.com/OpenVisualCloud/SVT-HEVC.git && \
-git clone https://github.com/OpenVisualCloud/SVT-AV1 && \
-git clone https://github.com/OpenVisualCloud/SVT-VP9
-
-cd ~/ffmpeg_sources/SVT-VP9 && \
-git pull && \
-cd Build && cmake .. && \
-make -j `nproc` && \
-sudo make install 
-
-
-cd ~/ffmpeg_sources/SVT-HEVC && \
-git pull &&\
-cd Build/linux && \
-./build.sh release && \
-cd Release &&\ 
-sudo make install
-
-
-cd ~/ffmpeg_sources/SVT-AV1 && \
-git pull && \
-cd Build/linux && \
-./build.sh release && \
-cd Release && \
-sudo make install
+#cd ~/ffmpeg_sources/ && \ 
+#git clone https://github.com/OpenVisualCloud/SVT-HEVC.git && \
+#git clone https://github.com/OpenVisualCloud/SVT-AV1 && \
+#git clone https://github.com/OpenVisualCloud/SVT-VP9
+#
+#cd ~/ffmpeg_sources/SVT-VP9 && \
+#git pull && \
+#cd Build && cmake .. && \
+#make -j `nproc` && \
+#sudo make install 
+#
+#
+#cd ~/ffmpeg_sources/SVT-HEVC && \
+#git pull &&\
+#cd Build/linux && \
+#./build.sh release && \
+#cd Release &&\ 
+#sudo make install
+#
+#
+#cd ~/ffmpeg_sources/SVT-AV1 && \
+#git pull && \
+#cd Build/linux && \
+#./build.sh release && \
+#cd Release && \
+#sudo make install
 
 cd ~/ffmpeg_sources && \
 git clone https://github.com/FFmpeg/FFmpeg ffmpeg && \
 cd ffmpeg && \
-git checkout -b tag4.2.2 n4.2.2 
+git checkout -b tag4.3.1 n4.3.1 
 
-cd ~/ffmpeg_sources/ffmpeg && \
-git apply ../SVT-HEVC/ffmpeg_plugin/0001-lavc-svt_hevc-add-libsvt-hevc-encoder-wrapper.patch
-git apply ../SVT-AV1/ffmpeg_plugin/0001-Add-ability-for-ffmpeg-to-run-svt-av1-with-svt-hevc.patch
-git apply ../SVT-VP9/ffmpeg_plugin/0001-Add-ability-for-ffmpeg-to-run-svt-vp9-with-hevc-av1.patch
+#cd ~/ffmpeg_sources/ffmpeg && \
+#git apply ../SVT-HEVC/ffmpeg_plugin/0001-lavc-svt_hevc-add-libsvt-hevc-encoder-wrapper.patch
+#git apply ../SVT-AV1/ffmpeg_plugin/0001-Add-ability-for-ffmpeg-to-run-svt-av1-with-svt-hevc.patch
+#git apply ../SVT-VP9/ffmpeg_plugin/0001-Add-ability-for-ffmpeg-to-run-svt-vp9-with-hevc-av1.patch
 
 
 cd ~/ffmpeg_sources && \
 git clone https://git.videolan.org/git/ffmpeg/nv-codec-headers.git && \
 cd nv-codec-headers && sudo make install && \
 cd .. && \
-wget http://us.download.nvidia.com/tesla/440.64.00/nvidia-driver-local-repo-ubuntu1604-440.64.00_1.0-1_amd64.deb && \
-sudo dpkg -i nvidia-driver-local-repo-ubuntu1604-440.64.00_1.0-1_amd64.deb && \
+wget http://us.download.nvidia.com/tesla/450.51.05/nvidia-driver-local-repo-ubuntu1604-450.51.05_1.0-1_amd64.deb && \
+sudo dpkg -i nvidia-driver-local-repo-ubuntu1604-450.51.05_1.0-1_amd64.deb && \
 wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-ubuntu1604.pin && \
 sudo mv cuda-ubuntu1604.pin /etc/apt/preferences.d/cuda-repository-pin-600 && \
 sudo apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/7fa2af80.pub && \
@@ -156,6 +156,7 @@ export PATH=$PATH:/usr/local/cuda/bin/
 
 python3 -m pip install meson
 python3 -m pip install ninja
+python3 -m pip install cython
 
 cd ~/ffmpeg_sources && \
 git clone https://github.com/Netflix/vmaf.git && \
@@ -188,9 +189,6 @@ PKG_CONFIG_PATH="$HOME/ffmpeg_build/lib/pkgconfig" \
 --enable-libx264   \
 --enable-libx265   \
 --enable-nonfree \
---enable-libsvthevc \
---enable-libsvtav1 \
---enable-libsvtvp9 \
 --enable-cuda-sdk \
 --enable-cuvid \
 --enable-nvenc \
