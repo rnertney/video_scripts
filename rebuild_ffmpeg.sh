@@ -1,3 +1,4 @@
+BUILDDR=ffmpeg43
 sudo apt-get update -qq && sudo apt-get -y install \
   autoconf \
   automake \
@@ -32,7 +33,7 @@ wget https://www.nasm.us/pub/nasm/releasebuilds/2.14.02/nasm-2.14.02.tar.bz2 && 
 tar xjvf nasm-2.14.02.tar.bz2 && \
 cd nasm-2.14.02 && \
 ./autogen.sh && \
-PATH="$HOME/bin:$PATH" ./configure --prefix="$HOME/ffmpeg_build" --bindir="$HOME/bin" && \
+PATH="$HOME/bin/$VER/:$PATH" ./configure --prefix="$HOME/$BUILDDR" --bindir="$HOME/bin/$VER" && \
 make -j && \
 make install
 
@@ -40,37 +41,37 @@ cd ~/ffmpeg_sources && \
 wget -O yasm-1.3.0.tar.gz https://www.tortall.net/projects/yasm/releases/yasm-1.3.0.tar.gz && \
 tar xzvf yasm-1.3.0.tar.gz && \
 cd yasm-1.3.0 && \
-./configure --prefix="$HOME/ffmpeg_build" --bindir="$HOME/bin" && \
+./configure --prefix="$HOME/$BUILDDR" --bindir="$HOME/bin/$VER" && \
 make -j && \
 make install
 
 cd ~/ffmpeg_sources && \
 git -C x264 pull 2> /dev/null || git clone --depth 1 https://code.videolan.org/videolan/x264.git && \
 cd x264 && \
-PATH="$HOME/bin:$PATH" PKG_CONFIG_PATH="$HOME/ffmpeg_build/lib/pkgconfig" ./configure --prefix="$HOME/ffmpeg_build" --bindir="$HOME/bin" --enable-static --enable-pic && \
-PATH="$HOME/bin:$PATH" make -j && \
+PATH="$HOME/bin/$VER:$PATH" PKG_CONFIG_PATH="$HOME/$BUILDDR/lib/pkgconfig" ./configure --prefix="$HOME/$BUILDDR" --bindir="$HOME/bin/$VER" --enable-static --enable-pic && \
+PATH="$HOME/bin/$VER:$PATH" make -j && \
 make install
 
 sudo apt-get -y install mercurial libnuma-dev && \
 cd ~/ffmpeg_sources && \
 if cd x265 2> /dev/null; then hg pull && hg update && cd ..; else hg clone https://bitbucket.org/multicoreware/x265; fi && \
 cd x265/build/linux && \
-PATH="$HOME/bin:$PATH" cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX="$HOME/ffmpeg_build" -DENABLE_SHARED=off ../../source && \
-PATH="$HOME/bin:$PATH" make -j && \
+PATH="$HOME/bin/$VER:$PATH" cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX="$HOME/$BUILDDR" -DENABLE_SHARED=off ../../source && \
+PATH="$HOME/bin/$VER:$PATH" make -j && \
 make install
 
 cd ~/ffmpeg_sources && \
 git -C libvpx pull 2> /dev/null || git clone --depth 1 https://chromium.googlesource.com/webm/libvpx.git && \
 cd libvpx && \
-PATH="$HOME/bin:$PATH" ./configure --prefix="$HOME/ffmpeg_build" --disable-examples --disable-unit-tests --enable-vp9-highbitdepth --as=yasm && \
-PATH="$HOME/bin:$PATH" make -j && \
+PATH="$HOME/bin/$VER:$PATH" ./configure --prefix="$HOME/$BUILDDR" --disable-examples --disable-unit-tests --enable-vp9-highbitdepth --as=yasm && \
+PATH="$HOME/bin/$VER:$PATH" make -j && \
 make install
 
 cd ~/ffmpeg_sources && \
 git -C fdk-aac pull 2> /dev/null || git clone --depth 1 https://github.com/mstorsjo/fdk-aac && \
 cd fdk-aac && \
 autoreconf -fiv && \
-./configure --prefix="$HOME/ffmpeg_build" --disable-shared && \
+./configure --prefix="$HOME/$BUILDDR" --disable-shared && \
 make -j && \
 make install
 
@@ -78,8 +79,8 @@ cd ~/ffmpeg_sources && \
 wget -O lame-3.100.tar.gz https://downloads.sourceforge.net/project/lame/lame/3.100/lame-3.100.tar.gz && \
 tar xzvf lame-3.100.tar.gz && \
 cd lame-3.100 && \
-PATH="$HOME/bin:$PATH" ./configure --prefix="$HOME/ffmpeg_build" --bindir="$HOME/bin" --disable-shared --enable-nasm && \
-PATH="$HOME/bin:$PATH" make -j && \
+PATH="$HOME/bin/$VER:$PATH" ./configure --prefix="$HOME/$BUILDDR" --bindir="$HOME/bin/$VER" --disable-shared --enable-nasm && \
+PATH="$HOME/bin/$VER:$PATH" make -j && \
 make install
 
 
@@ -87,7 +88,7 @@ cd ~/ffmpeg_sources && \
 git -C opus pull 2> /dev/null || git clone --depth 1 https://github.com/xiph/opus.git && \
 cd opus && \
 ./autogen.sh && \
-./configure --prefix="$HOME/ffmpeg_build" --disable-shared && \
+./configure --prefix="$HOME/$BUILDDR" --disable-shared && \
 make -j && \
 make install
 
@@ -95,48 +96,51 @@ cd ~/ffmpeg_sources && \
 git -C aom pull 2> /dev/null || git clone --depth 1 https://aomedia.googlesource.com/aom && \
 mkdir -p aom_build && \
 cd aom_build && \
-PATH="$HOME/bin:$PATH" cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX="$HOME/ffmpeg_build" -DENABLE_SHARED=off -DENABLE_NASM=on ../aom && \
-PATH="$HOME/bin:$PATH" make -j && \
+PATH="$HOME/bin/$VER:$PATH" cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX="$HOME/$BUILDDR" -DENABLE_SHARED=off -DENABLE_NASM=on ../aom && \
+PATH="$HOME/bin/$VER/:$PATH" make -j && \
 make install
 
 rm -rf ~/ffmpeg_sources/SVT*
-#cd ~/ffmpeg_sources/ && \ 
-#git clone https://github.com/OpenVisualCloud/SVT-HEVC.git && \
-#git clone https://github.com/OpenVisualCloud/SVT-AV1 && \
-#git clone https://github.com/OpenVisualCloud/SVT-VP9
-#
-#cd ~/ffmpeg_sources/SVT-VP9 && \
-#git pull && \
-#cd Build && cmake .. && \
-#make -j `nproc` && \
-#sudo make install 
-#
-#
-#cd ~/ffmpeg_sources/SVT-HEVC && \
-#git pull &&\
-#cd Build/linux && \
-#./build.sh release && \
-#cd Release &&\ 
-#sudo make install
-#
-#
-#cd ~/ffmpeg_sources/SVT-AV1 && \
-#git pull && \
-#cd Build/linux && \
-#./build.sh release && \
-#cd Release && \
-#sudo make install
+cd ~/ffmpeg_sources/ && \ 
+git clone https://github.com/OpenVisualCloud/SVT-HEVC.git && \
+git clone https://github.com/OpenVisualCloud/SVT-AV1 && \
+git clone https://github.com/OpenVisualCloud/SVT-VP9
+
+cd ~/ffmpeg_sources/SVT-VP9 && \
+git pull && \
+cd Build && cmake .. && \
+make -j `nproc` && \
+sudo make install 
+
+
+cd ~/ffmpeg_sources/SVT-HEVC && \
+git pull &&\
+cd Build/linux && \
+./build.sh release && \
+cd Release &&\ 
+sudo make install
+
+
+cd ~/ffmpeg_sources/SVT-AV1 && \
+git pull && \
+cd Build/linux && \
+./build.sh release && \
+cd Release && \
+sudo make install
 
 cd ~/ffmpeg_sources && \
 git clone https://github.com/FFmpeg/FFmpeg ffmpeg && \
 cd ffmpeg && \
 git checkout -b tag4.3.1 n4.3.1 
 
-#cd ~/ffmpeg_sources/ffmpeg && \
-#git apply ../SVT-HEVC/ffmpeg_plugin/0001-lavc-svt_hevc-add-libsvt-hevc-encoder-wrapper.patch
-#git apply ../SVT-AV1/ffmpeg_plugin/0001-Add-ability-for-ffmpeg-to-run-svt-av1-with-svt-hevc.patch
-#git apply ../SVT-VP9/ffmpeg_plugin/0001-Add-ability-for-ffmpeg-to-run-svt-vp9-with-hevc-av1.patch
-
+cd ~/ffmpeg_sources/ffmpeg && \
+echo "patching svt-hevc"
+git apply ../SVT-HEVC/ffmpeg_plugin/0001*.patch
+echo "patching svt-avi"
+git apply ../SVT-AV1/ffmpeg_plugin/*.patch
+echo "patching svt-vp9"
+git apply ../SVT-VP9/ffmpeg_plugin/master*.patch
+echo "on to NVIDIA"
 
 cd ~/ffmpeg_sources && \
 git clone https://git.videolan.org/git/ffmpeg/nv-codec-headers.git && \
@@ -165,18 +169,20 @@ make -j && \
 cd libvmaf/build && \
 sudo ninja -vC . install
 
+echo "Moving to final step"
 #clone vmaf, make -j, into ninja, ninja -vC . install, copy to /usr/lib/pkgconfig (or wherever pkg-config --variable pc_path pkg-config points to
+#--enable-libsvtvp9 \
 
 cd ~/ffmpeg_sources/ffmpeg && \
-PATH="$HOME/bin:$PATH" \
-PKG_CONFIG_PATH="$HOME/ffmpeg_build/lib/pkgconfig" \
+PATH="$HOME/bin/$VER/:$PATH" \
+PKG_CONFIG_PATH="$HOME/$BUILDDR/lib/pkgconfig" \
 ./configure   \
---prefix="$HOME/ffmpeg_build"   \
+--prefix="$HOME/$BUILDDR"   \
 --pkg-config-flags="--static"   \
---extra-cflags="-I$HOME/ffmpeg_build/include -I/usr/local/cuda/include"   \
---extra-ldflags="-L$HOME/ffmpeg_build/lib -L/usr/local/cuda/lib64"   \
+--extra-cflags="-I$HOME/$BUILDDR/include -I/usr/local/cuda/include"   \
+--extra-ldflags="-L$HOME/$BUILDDR/lib -L/usr/local/cuda/lib64"   \
 --extra-libs="-lpthread -lm"   \
---bindir="$HOME/bin"   \
+--bindir="$HOME/bin/$VER/"   \
 --enable-gpl   \
 --enable-libaom   \
 --enable-libass   \
@@ -191,12 +197,14 @@ PKG_CONFIG_PATH="$HOME/ffmpeg_build/lib/pkgconfig" \
 --enable-nonfree \
 --enable-cuda-sdk \
 --enable-cuvid \
+--enable-libsvthevc \
+--enable-libsvtav1 \
 --enable-nvenc \
 --enable-libvmaf \
 --enable-version3 \
 --enable-nonfree \
 --enable-libnpp && \
-PATH="$HOME/bin:$PATH" make -j && make install
+PATH="$HOME/bin/$VER/:$PATH" make -j && make install
 
 echo "export PKG_CONFIG_PATH=${PKG_CONFIG_PATH}:/usr/local/lib/pkgconfig:/usr/local/lib/x86_64-linux-gnu/pkgconfig" >> ~/.bashrc
 echo "export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib:/home/`whoami`/ffmpeg_sources/vmaf/libvmaf/build/src/" >> ~/.bashrc
